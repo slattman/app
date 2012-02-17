@@ -1,0 +1,17 @@
+<?php
+	$this->app()->users->authenticate();
+	if (isset($this->app()->session->user->id)) {
+		$this->app()->go('members');
+	}
+?>
+<h2>Login Title</h2>
+
+<form method="post">
+	<fieldset>
+		<legend>Login Form</legend>
+		<p><label for="username"><input type="text" name="username"></label></p>
+		<p><label for="password"><input type="password" name="password"></label></p>
+		<p><input type="submit" name="Login"></p>
+	</fieldset>
+</form>
+
