@@ -4,7 +4,6 @@
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 ######################################################################################
-# initiate the app framework
 
 # start the session
 session_start();
@@ -12,13 +11,12 @@ session_start();
 # load the configuration file
 require_once('../app/config.php');
 
-# shall we?
+# instanciate the framework
 $app = new app();
 
+# shall we?
 class app {
 
-	function __autoload() {}
-	
 	function __construct($initialized = false) {
 		if (!$initialized) {
 			$this->initialize();

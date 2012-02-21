@@ -65,10 +65,10 @@ class user extends app {
 				case 'administrator': {
 					if (isset($this->app()->session->user->group)) {
 						if ($this->app()->session->user->group != 'administrator') {
-							$this->app()->go('login');
+							$this->app()->user->logout();
 						}
 					} else {
-						$this->app()->go('login');
+						$this->app()->user->logout();
 					}
 					break;
 				}
@@ -76,10 +76,10 @@ class user extends app {
 					if (isset($this->app()->session->user->group)) {
 						if ($this->app()->session->user->group != 'administrator' and 
 							$this->app()->session->user->group != 'user') {
-							$this->app()->go('login');
+							$this->app()->user->logout();
 						}
 					} else {
-						$this->app()->go('login');
+						$this->app()->user->logout();
 					}
 					break;
 				}

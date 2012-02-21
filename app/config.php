@@ -20,7 +20,7 @@ define('author', '');
 define('dbhost', 'localhost');
 define('dbname', 'app');
 define('dbuser', 'root');
-define('dbpass', 'magic');
+define('dbpass', 'xxxxxxxxxxxxx');
 
 #paths
 define('url', '//localhost/app/');
