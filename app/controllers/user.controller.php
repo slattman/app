@@ -26,12 +26,17 @@ class user extends app {
 			$user->password = sha1($password);
 			$user->group = 'user';
 			$user->create();
-			$this->app()->set('user', array(
-				'id' => $user->id,
-				'username' => $user->username,
-				'password' => $user->password,
-				'group' => $user->group
-			));
+			if ($user->id !== 0) {
+				$this->app()->set('user', array(
+					'id' => $user->id,
+					'username' => $user->username,
+					'password' => $user->password,
+					'group' => $user->group
+				));
+				$this->app()->go('members');
+			} else {
+				$this->bind(array('<span class="error">That username is already taken.</span>'), 'messages');
+			}
 		}
 	}
 	

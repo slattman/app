@@ -23,31 +23,37 @@ class data extends app {
 			$link = new mysqli(dbhost, dbuser, dbpass, dbname);
 			$sql = array_shift($parameters);
 			if (!$stmt = mysqli_prepare($link, $sql)) {
+				print_r($link);
 				$link->close();
-				$this->app()->error('Please check your sql statement : unable to prepare: '.$sql);
+				$this->app()->error($sql);
 			}
 			array_splice($parameters, 1, 1, $parameters[1]);
 			call_user_func_array(array($stmt, 'bind_param'), $this->reference($parameters));
 			mysqli_stmt_execute($stmt);
 			$result = mysqli_stmt_result_metadata($stmt);
-			$fields = array();
-			while ($field = mysqli_fetch_field($result)) {
-				$name = $field->name;
-				$fields[$name] = &$$name;
-			}
-			array_unshift($fields, $stmt);
-			call_user_func_array('mysqli_stmt_bind_result', $fields);
-			array_shift($fields);
 			$results = array();
-			while (mysqli_stmt_fetch($stmt)) {
-				$temp = array();
-				foreach($fields as $key => $val) { $temp[$key] = $val; }
-				array_push($results, $temp);
+			$fields = array();
+			if ($result) {
+				while ($field = mysqli_fetch_field($result)) {
+					$name = $field->name;
+					$fields[$name] = &$$name;
+				}
+				array_unshift($fields, $stmt);
+				call_user_func_array('mysqli_stmt_bind_result', $fields);
+				array_shift($fields);
+				$results = array();
+				while (mysqli_stmt_fetch($stmt)) {
+					$temp = array();
+					foreach($fields as $key => $val) { $temp[$key] = $val; }
+					array_push($results, $temp);
+				}
+				if (count($results) == 1) $results = $results[0];
+				mysqli_free_result($result);
+			} else {
+				return mysqli_insert_id($link);
 			}
-			if (count($results) == 1) $results = $results[0];
 			$this->bind($results, 'results');
 			$this->populate();
-			mysqli_free_result($result);
 			mysqli_stmt_close($stmt);
 			$link->close();
 		} else {
@@ -90,8 +96,7 @@ class data extends app {
 			}
 			$params[] = '?';
 		}
-		$this->app()->data->query("insert into ".$this->table." (".implode(", ", array_keys($attributes)).") values (".implode(", ", $params).")", $types, array_values($attributes));
-		$this->$index = mysql_insert_id();
+		$this->$index = $this->app()->data->query("insert into ".$this->table." (`".implode("`, `", array_keys($attributes))."`) values (".implode(", ", $params).")", $types, array_values($attributes));
 	}
 
 	public function read() {
@@ -129,6 +134,7 @@ class data extends app {
 	}
 	
 	public function delete() {
+		$index = $this->index;
 		$this->app()->data->query("delete from ".$this->table." where ".$this->index." = ?", array('i', $this->$index));
 	}
 
