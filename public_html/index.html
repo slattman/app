@@ -35,6 +35,7 @@
 								<li><a href="<?php echo url;?>members">Members</a></li>
 								<li><a href="<?php echo url;?>logout">Logout</a></li>
 							<?php else : ?>
+								<li><a href="<?php echo url;?>join">Join</a></li>
 								<li><a href="<?php echo url;?>login">Login</a></li>
 							<?php endif; ?>
 							<li><a href="<?php echo url;?>contact">Contact</a></li>
@@ -45,7 +46,7 @@
 		</div>
 
 		<div class="container">
-			<?php $app->html();?>
+			<?php $app->view();?>
 			<hr>
 			<footer>
 				<p>&copy; Company 2012</p>

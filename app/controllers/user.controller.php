@@ -1,9 +1,9 @@
 <?php
 # app framework users.class.php
-# v1.4 Brad Slattman - slattman@gmail.com
+# v1.5 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
-class users extends app {
+class user extends app {
 
 	function __construct() {
 		parent::__construct(true);
@@ -14,8 +14,28 @@ class users extends app {
 		$this->app()->go('login');
 	}
 	
+	function join() {
+		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
+			$username = $this->app()->request->username;
+			$password = sha1($this->app()->request->password);
+		}
+		if (isset($username) and isset($password)) {
+			$user = $this->app()->users;
+			$user->id = '';
+			$user->username = $username;
+			$user->password = sha1($password);
+			$user->group = 'user';
+			$user->create();
+			$this->app()->set('user', array(
+				'id' => $user->id,
+				'username' => $user->username,
+				'password' => $user->password,
+				'group' => $user->group
+			));
+		}
+	}
+	
 	function authenticate($group = false) {
-
 		if (isset($this->app()->session->user->username) and isset($this->app()->session->user->password)) {
 			$username = $this->app()->session->user->username;
 			$password = $this->app()->session->user->password;
@@ -24,15 +44,16 @@ class users extends app {
 			$password = sha1($this->app()->request->password);
 		}
 		if (isset($username) and isset($password)) {
-			$this->app()->data->query(
-				"select * from users where username = ? and password = ?", 
-				'ss', 
-				$username, 
-				$password
-			);
-		}
-		if (isset($this->app()->data->results)) {
-			$this->app()->set('user', $this->app()->data->results);
+			$user = $this->app()->users;
+			$user->username = $username;
+			$user->password = $password;
+			$user->read();
+			$this->app()->set('user', array(
+				'id' => $user->id,
+				'username' => $user->username,
+				'password' => $user->password,
+				'group' => $user->group
+			));
 		}
 		if ($group) {
 			switch ($group) {

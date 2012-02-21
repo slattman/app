@@ -1,11 +1,12 @@
 <?php
 # app framework config.php
-# v1.4 Brad Slattman - slattman@gmail.com
+# v1.5 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 #common
 define('version', '1.0');
 
+ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
 #configuration
@@ -24,8 +25,9 @@ define('dbpass', 'magic');
 #paths
 define('url', '//localhost/app/');
 define('app', '../app/');
-define('html', app.'html/');
 define('libs', app.'libs/');
-define('classes', app.'classes/');
+define('models', app.'models/');
+define('controllers', app.'controllers/');
+define('views', app.'views/');
 
 ?>

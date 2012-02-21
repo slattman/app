@@ -1,6 +1,6 @@
 <?php
 # app framework main.php
-# v1.4 Brad Slattman - slattman@gmail.com
+# v1.5 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 ######################################################################################
@@ -17,6 +17,8 @@ $app = new app();
 
 class app {
 
+	function __autoload() {}
+	
 	function __construct($initialized = false) {
 		if (!$initialized) {
 			$this->initialize();
@@ -35,20 +37,28 @@ class app {
 		if ($method and method_exists(__CLASS__, $method)) {
 			call_user_func_array(array($this, $method), array());
 		}
-		if (is_dir(classes)) {
-			if ($dh = opendir(classes)) {
-				while (($class = readdir($dh)) !== false) {
-					$class = str_replace('.class.php', '', $class);
-					if (!is_dir($class)) require_once(classes.$class.'.class.php');
-					if (in_array($class, get_declared_classes())) {
-						$this->$class = new $class();
+		$this->load(controllers);
+		$this->load(models);
+	}
+
+	function load($dir = false) {
+		if (is_dir($dir)) {
+			if ($dh = opendir($dir)) {
+				while (($file = readdir($dh)) !== false) {
+					if (file_exists($dir.$file) and strstr($file, '.php') and substr_count($file, '.') == 2) {
+						$class = explode('.', $file);
+						$class = $class[0];
+						require_once($dir.$file);
+						if (in_array($class, get_declared_classes())) {
+							$this->$class = new $class();
+						}
 					}
 				}
 				closedir($dh);
 			}
 		}
 	}
-
+	
 	function set($key = false, $value = false) {
 		if ($key) {
 			$_SESSION[$key] = $value;
@@ -60,14 +70,14 @@ class app {
 		if ($page) header("Location: $page");
 	}
 
-	function html() {
-		$html = isset($this->request->app) && $this->request->app ? $this->request->app : 'index';
-		if (file_exists(html.$html.'.html')) {
-			require_once(html.$html.'.html');
-		} elseif (is_dir(html.$html)) {
-			require_once(html.$html.'/index.html');
-		} elseif (file_exists(html.'index.html')) {
-			require_once(html.'index.html');
+	function view() {
+		$view = isset($this->request->app) ? $this->request->app : 'index';
+		if (file_exists(views.$view.'.html')) {
+			require_once(views.$view.'.html');
+		} elseif (is_dir(views.$view)) {
+			require_once(views.$view.'/index.html');
+		} elseif (file_exists(views.'index.html')) {
+			require_once(views.'index.html');
 		}
 	}
 	
@@ -126,7 +136,7 @@ class app {
 	Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 	 */
 	function purify($dirty_html) {
-		require_once(libs.'htmlpurifier/HTMLPurifier.standalone.php');
+		require_once(helpers.'htmlpurifier/HTMLPurifier.standalone.php');
 		return HTMLPurifier::purify($dirty_html);
 	}
 
