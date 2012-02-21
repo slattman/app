@@ -115,7 +115,7 @@ class app {
 	}
 
 	###############################################################################
-	# 3rd party libraries
+	# 3rd party helpers
 
 	/*
 	HTML Purifier 4.2.0 - Standards Compliant HTML Filtering

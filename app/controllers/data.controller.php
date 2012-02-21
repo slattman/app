@@ -80,6 +80,7 @@ class data extends app {
 	public function create() {
 		$types = '';
 		$params = array();
+		$index = $this->index;
 		$attributes = $this->attributes();
 		foreach ($attributes as $k => $v) {
 			if (is_numeric($v)) {
@@ -114,6 +115,7 @@ class data extends app {
 	public function update() {
 		$types = '';
 		$params = array();
+		$index = $this->index;
 		$attributes = $this->attributes();
 		foreach ($attributes as $k => $v) {
 			if (is_numeric($v)) {

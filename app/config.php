@@ -25,9 +25,9 @@ define('dbpass', 'magic');
 #paths
 define('url', '//localhost/app/');
 define('app', '../app/');
-define('libs', app.'libs/');
 define('models', app.'models/');
 define('controllers', app.'controllers/');
 define('views', app.'views/');
+define('helpers', app.'helpers/');
 
 ?>
