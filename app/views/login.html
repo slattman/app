@@ -6,6 +6,16 @@
 ?>
 <h2>Login Title</h2>
 
+<div class="messages">
+	<ul>
+		<?php if (isset($this->app()->user->messages) and count($this->app()->user->messages)) : ?>
+			<?php foreach ($this->app()->user->messages as $message) : ?>
+				<li><?php echo $message;?></li>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</ul>
+</div>
+
 <form method="post">
 	<fieldset>
 		<legend>Login Form</legend>

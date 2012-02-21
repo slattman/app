@@ -60,6 +60,9 @@ class user extends app {
 				'group' => $user->group
 			));
 		}
+		if (!$user->id) {
+			$this->bind(array('<span class="error">Invalid username or password.</span>'), 'messages');
+		}
 		if ($group) {
 			switch ($group) {
 				case 'administrator': {
