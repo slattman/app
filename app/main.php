@@ -11,7 +11,7 @@ session_start();
 # load the configuration file
 require_once('../app/config.php');
 
-# instanciate the framework
+# instantiate the framework
 $app = new app();
 
 # shall we?
