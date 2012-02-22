@@ -65,7 +65,7 @@ class app {
 	}
 
 	function go($page = false) {
-		if ($page) header("Location: $page");
+		if ($page) header("Location: ".url.$page);
 	}
 
 	function view() {
