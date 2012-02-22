@@ -41,7 +41,7 @@ class user extends app {
 			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
 			$user->create();
-			if (isset($user->id)) {
+			if (isset($user->id) and $user->id > 0) {
 				$this->app()->set('user', array(
 					'id' => $user->id,
 					'username' => $user->username,
