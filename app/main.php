@@ -72,16 +72,15 @@ class app {
 		$view = isset($this->request->app) ? $this->request->app : 'index';
 		if (file_exists(views.$view.'.html')) {
 			require_once(views.$view.'.html');
-		} elseif (is_dir(views.$view)) {
+		} elseif (is_dir(views.$view) and file_exists(views.$view.'/index.html')) {
 			require_once(views.$view.'/index.html');
-		} elseif (file_exists(views.'index.html')) {
-			require_once(views.'index.html');
+		} else {
+			$this->go('404.html');
 		}
 	}
 	
 	function current_view() {
-		$view = isset($this->request->app) ? $this->request->app : 'index';
-		return $view;
+		return isset($this->request->app) ? $this->request->app : 'index';
 	}
 	
 	function bind($array = array(), $key = false) {
