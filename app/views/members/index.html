@@ -1,4 +1,17 @@
 <h2>Welcome <?php echo $this->app()->users->username; ?>!</h2>
 
+<div class="messages">
+	<ul>
+		<?php if (isset($this->app()->session->messages) and count($this->app()->session->messages)) : ?>
+			<?php foreach ($this->app()->session->messages as $message) : ?>
+				<li><?php echo $message;?></li>
+			<?php endforeach; ?>
+		<?php endif; ?>
+	</ul>
+</div>
+<?php $this->app()->set('messages', array()); ?>
+
+<p><a href="member/delete">Click here</a> to delete your account</p>
+
 <?php $this->app()->debug(); ?>
 

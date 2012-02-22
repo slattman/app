@@ -9,8 +9,24 @@ class user extends app {
 		parent::__construct(true);
 	}
 
+	function delete() {
+		if ($this->app()->user->is_authorized()) {
+			$user = $this->app()->users;
+			$user->id = $this->app()->session->user->id;
+			$user->delete();
+			$this->app()->set('user', new stdClass());		
+			$this->app()->set('messages', array(
+				'<span class="info">Invalid username or password.</span>'
+			));
+			$this->app()->go('login');
+		}
+	}
+	
 	function logout() {
 		$this->app()->set('user', new stdClass());
+		$this->app()->set('messages', array(
+			'<span class="info">You have been logged out.</span>'
+		));
 		$this->app()->go('login');
 	}
 	
@@ -27,9 +43,14 @@ class user extends app {
 				'group' => $user->group
 			));
 			if ($this->app()->user->is_authorized()) {
+				$this->app()->set('messages', array(
+					'<span class="info">You have been logged in.</span>'
+				));
 				$this->app()->go('members');
 			} else {
-				$this->bind(array('<span class="error">Invalid username or password.</span>'), 'messages');
+				$this->app()->set('messages', array(
+					'<span class="error">Invalid username or password.</span>'
+				));
 			}
 		}
 	}
@@ -50,7 +71,10 @@ class user extends app {
 				));
 				$this->app()->go('members');
 			} else {
-				$this->bind(array('<span class="error">That username is already taken.</span>'), 'messages');
+				$this->app()->set('messages', array(
+					'<span class="error">That username is already taken.</span>'
+				));
+				$this->app()->go('join');
 			}
 		}
 	}

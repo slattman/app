@@ -2,13 +2,14 @@
 
 <div class="messages">
 	<ul>
-		<?php if (isset($this->app()->user->messages) and count($this->app()->user->messages)) : ?>
-			<?php foreach ($this->app()->user->messages as $message) : ?>
+		<?php if (isset($this->app()->session->messages) and count($this->app()->session->messages)) : ?>
+			<?php foreach ($this->app()->session->messages as $message) : ?>
 				<li><?php echo $message;?></li>
 			<?php endforeach; ?>
 		<?php endif; ?>
 	</ul>
 </div>
+<?php $this->app()->set('messages', array()); ?>
 
 <form method="post">
 	<fieldset>

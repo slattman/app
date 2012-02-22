@@ -19,9 +19,10 @@ define('author', '');
 define('dbhost', 'localhost');
 define('dbname', 'app');
 define('dbuser', 'root');
-define('dbpass', 'xxxxxxxxxxxxx');
+define('dbpass', 'xxxxxxxxx');
 
 # paths
+define('abs', 'c:/Users/brad.slattman/workspace/app/');
 define('url', '//localhost/app/');
 define('app', '../app/');
 define('models', app.'models/');
@@ -51,11 +52,16 @@ $routes = array(
 		'class' => 'user',
 		'method' => 'authenticate',
 		'args' => 'user'
+	),
+	'member/delete' => array(
+		'view' => false,
+		'class' => 'user',
+		'method' => 'delete'
 	)
 );
 
 # pages
-define('error_page', '404.html');
+define('error', '404.html');
 
 
 

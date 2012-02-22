@@ -37,6 +37,10 @@ class data extends app {
 	}
 
 	function query($sql = '', $types = '', $parameters = array()) {
+		/*$args = func_get_args();
+		echo "<pre>";
+		print_r($args);
+		exit;*/
 		$result = array();
 		array_unshift($parameters, $types);
 		$mysqli = new mysqli(dbhost, dbuser, dbpass, dbname);

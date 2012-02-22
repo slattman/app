@@ -73,13 +73,21 @@ class app {
 		$view = isset($this->request->app) ? $this->request->app : 'index';
 		if (array_key_exists($view, $routes)) {
 			$route = $routes[$view];
-			if (isset($route['args'])) {
-				$this->app()->$route['class']->$route['method']($route['args']);
-			} else {
-				$this->app()->$route['class']->$route['method']();
-			}
-			if ($route['view'] !== true) {
-				return;
+			if (class_exists($route['class'])) {
+				if (method_exists($this->app()->$route['class'], $route['method'])) {
+					$method = new ReflectionMethod($route['class'], $route['method']);
+					if (isset($route['args'])) {
+						if (!is_array($route['args'])) {
+							$route['args'] = array($route['args']);
+						}
+						$method->invokeArgs($this->app()->$route['class'], $route['args']);
+					} else {
+						$method->invoke($this->app()->$route['class']);
+					}
+					if ($route['view'] !== true) {
+						return;
+					}
+				}
 			}
 		}
 		if (file_exists(views.$view.'.html')) {
@@ -87,7 +95,7 @@ class app {
 		} elseif (is_dir(views.$view) and file_exists(views.$view.'/index.html')) {
 			require_once(views.$view.'/index.html');
 		} else {
-			$this->go(error_page);
+			$this->go(error);
 		}
 	}
 	
@@ -117,10 +125,11 @@ class app {
 		die(htmlspecialchars($error));
 	}
 
-	function debug() {
+	function debug($die = false) {
 		echo "<pre>";
 		print_r($this);
 		echo "</pre>";
+		if ($die) die;
 	}
 
 	function shutdown() {
