@@ -69,13 +69,25 @@ class app {
 	}
 
 	function view() {
+		global $routes;
 		$view = isset($this->request->app) ? $this->request->app : 'index';
+		if (array_key_exists($view, $routes)) {
+			$route = $routes[$view];
+			if (isset($route['args'])) {
+				$this->app()->$route['class']->$route['method']($route['args']);
+			} else {
+				$this->app()->$route['class']->$route['method']();
+			}
+			if ($route['view'] !== true) {
+				return;
+			}
+		}
 		if (file_exists(views.$view.'.html')) {
 			require_once(views.$view.'.html');
 		} elseif (is_dir(views.$view) and file_exists(views.$view.'/index.html')) {
 			require_once(views.$view.'/index.html');
 		} else {
-			$this->go('404.html');
+			$this->go(error_page);
 		}
 	}
 	
