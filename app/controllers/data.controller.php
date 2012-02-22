@@ -140,11 +140,23 @@ class data extends app {
 	}
 	
 	public function delete() {
-		$index = $this->index;
+		$types = '';
+		$params = array();
+		$attributes = $this->attributes();
+		foreach ($attributes as $k => $v) {
+			if ($v) {
+				if (is_numeric($v)) {
+					$types .= 'i';
+				} else {
+					$types .= 's';
+				}
+				$params[] = $k.' = ?';
+			}
+		}
 		$this->app()->data->query(
-			"delete from ".$this->table." where ".$this->index." = ?", 
-			'i', 
-			array($this->$index)
+			"delete from ".$this->table." where ".implode(" and ", $params), 
+			$types, 
+			array_values($attributes)
 		);
 	}
 
