@@ -79,6 +79,11 @@ class app {
 		}
 	}
 	
+	function current_view() {
+		$view = isset($this->request->app) ? $this->request->app : 'index';
+		return $view;
+	}
+	
 	function bind($array = array(), $key = false) {
 		$object = new stdClass();
 		if (count($array)) {

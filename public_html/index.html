@@ -30,15 +30,15 @@
 					<a class="brand" href="#">Project name</a>
 					<div class="nav-collapse">
 						<ul class="nav">
-							<li class="active"><a href="<?php echo url;?>">Home</a></li>
-							<?php if (isset($app->session->user->id)) : ?>
-								<li><a href="<?php echo url;?>members">Members</a></li>
-								<li><a href="<?php echo url;?>logout">Logout</a></li>
+							<li<?php echo $app->current_view() == 'index' ? ' class="active"' : '';?>><a href="<?php echo url;?>">Home</a></li>
+							<?php if ($app->user->is_authorized()) : ?>
+								<li<?php echo $app->current_view() == 'members' ? ' class="active"' : '';?>><a href="<?php echo url;?>members">Members</a></li>
+								<li<?php echo $app->current_view() == 'logout' ? ' class="active"' : '';?>><a href="<?php echo url;?>logout">Logout</a></li>
 							<?php else : ?>
-								<li><a href="<?php echo url;?>join">Join</a></li>
-								<li><a href="<?php echo url;?>login">Login</a></li>
+								<li<?php echo $app->current_view() == 'join' ? ' class="active"' : '';?>><a href="<?php echo url;?>join">Join</a></li>
+								<li<?php echo $app->current_view() == 'login' ? ' class="active"' : '';?>><a href="<?php echo url;?>login">Login</a></li>
 							<?php endif; ?>
-							<li><a href="<?php echo url;?>contact">Contact</a></li>
+							<li<?php echo $app->current_view() == 'contact' ? ' class="active"' : '';?>><a href="<?php echo url;?>contact">Contact</a></li>
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div>

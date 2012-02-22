@@ -6,69 +6,12 @@
 class data extends app {
 	
 	function __construct() { parent::__construct(true); }
-
-	function reference($array){
-		if (strnatcmp(phpversion(),'5.3') >= 0) {
-			$references = array();
-			foreach($array as $key => $value)
-				$references[$key] = &$array[$key];
-			return $references;
-		}
-		return $array;
-	}
-
-	function query() {
-		$parameters = func_get_args();
-		if (count($parameters) == 3) {
-			$link = new mysqli(dbhost, dbuser, dbpass, dbname);
-			$sql = array_shift($parameters);
-			if (!$stmt = mysqli_prepare($link, $sql)) {
-				print_r($link);
-				$link->close();
-				$this->app()->error($sql);
-			}
-			array_splice($parameters, 1, 1, $parameters[1]);
-			call_user_func_array(array($stmt, 'bind_param'), $this->reference($parameters));
-			mysqli_stmt_execute($stmt);
-			$result = mysqli_stmt_result_metadata($stmt);
-			$results = array();
-			$fields = array();
-			if ($result) {
-				while ($field = mysqli_fetch_field($result)) {
-					$name = $field->name;
-					$fields[$name] = &$$name;
-				}
-				array_unshift($fields, $stmt);
-				call_user_func_array('mysqli_stmt_bind_result', $fields);
-				array_shift($fields);
-				$results = array();
-				while (mysqli_stmt_fetch($stmt)) {
-					$temp = array();
-					foreach($fields as $key => $val) { $temp[$key] = $val; }
-					array_push($results, $temp);
-				}
-				if (count($results) == 1) $results = $results[0];
-				mysqli_free_result($result);
-			} else {
-				return mysqli_insert_id($link);
-			}
-			$this->bind($results, 'results');
-			$this->populate();
-			mysqli_stmt_close($stmt);
-			$link->close();
-		} else {
-			$this->app()->error("Invalid parameter count.");
-		}
-		return;
-	}
 	
 	function populate() {
-		if (isset($this->app()->data->results) and get_class($this) !== __CLASS__) {
-			$results = $this->app()->data->results;
-			if (is_object($results)) {
-				foreach ($results as $k => $v) {
-					$this->$k = $v;
-				}
+		$result = $this->app()->data->result;
+		if (isset($result) and get_class($this) !== __CLASS__) {
+			foreach ($result as $k => $v) {
+				$this->$k = $v;
 			}
 		}
 	}
@@ -82,6 +25,56 @@ class data extends app {
 		}
 		return $attributes;
 	}
+	
+	function reference($array){
+		if (strnatcmp(phpversion(),'5.3') >= 0) {
+			$references = array();
+			foreach($array as $key => $value)
+				$references[$key] = &$array[$key];
+			return $references;
+		}
+		return $array;
+	}
+
+	function query($sql = '', $types = '', $parameters = array()) {
+		$result = array();
+		array_unshift($parameters, $types);
+		$mysqli = new mysqli(dbhost, dbuser, dbpass, dbname);
+		if (mysqli_connect_errno()) {
+			$result['error'] = 'Connection failed: '.mysqli_connect_error();
+		}
+		if ($stmt = $mysqli->prepare($sql)) {
+	        $method = new ReflectionMethod('mysqli_stmt', 'bind_param');
+	        $method->invokeArgs($stmt, $this->reference($parameters));
+			$stmt->execute();
+			$meta = $stmt->result_metadata();
+			if (!$meta) {           
+				$result['insert_id'] = $stmt->insert_id;
+			} else {
+				$stmt->store_result();
+				$params = array();
+				$row = array();
+				while ($field = $meta->fetch_field()) {
+					$params[] = &$row[$field->name];
+				}
+				$meta->close();
+				$method = new ReflectionMethod('mysqli_stmt', 'bind_result');
+				$method->invokeArgs($stmt, $params);           
+				while ($stmt->fetch()) {
+					$arr = array();
+					foreach($row as $key => $val) {
+						$arr[$key] = $val;
+					}
+					$result[] = $arr;
+				}
+				if (count($result) == 1) $result = $result[0];
+				$stmt->free_result();
+			}
+			$stmt->close();
+		}
+		$mysqli->close();
+		$this->bind($result, 'result');
+	} 
 
 	public function create() {
 		$types = '';
@@ -96,7 +89,12 @@ class data extends app {
 			}
 			$params[] = '?';
 		}
-		$this->$index = $this->app()->data->query("insert into ".$this->table." (`".implode("`, `", array_keys($attributes))."`) values (".implode(", ", $params).")", $types, array_values($attributes));
+		$this->app()->data->query(
+			"insert into ".$this->table." (`".implode("`, `", array_keys($attributes))."`) values (".implode(", ", $params).")", 
+			$types, 
+			array_values($attributes)
+		);
+		$this->$index = $this->app()->data->result->insert_id;
 	}
 
 	public function read() {
@@ -113,7 +111,11 @@ class data extends app {
 				$params[] = $k.' = ?';
 			}
 		}
-		$this->app()->data->query("select * from ".$this->table." where ".implode(" and ", $params), $types, array_values($attributes));
+		$this->app()->data->query(
+			"select * from ".$this->table." where ".implode(" and ", $params), 
+			$types, 
+			array_values($attributes)
+		);
 		$this->populate();
 	}
 	
@@ -130,12 +132,20 @@ class data extends app {
 			}
 			$params[] = $k.' = ?';
 		}
-		$this->app()->data->query("update ".$this->table." set ".implode(", ", $params)." where ".$this->index."=".$this->$index, $types, array_values($attributes));
+		$this->app()->data->query(
+			"update ".$this->table." set ".implode(", ", $params)." where ".$this->index."=".$this->$index, 
+			$types, 
+			array_values($attributes)
+		);
 	}
 	
 	public function delete() {
 		$index = $this->index;
-		$this->app()->data->query("delete from ".$this->table." where ".$this->index." = ?", array('i', $this->$index));
+		$this->app()->data->query(
+			"delete from ".$this->table." where ".$this->index." = ?", 
+			'i', 
+			array($this->$index)
+		);
 	}
 
 }
