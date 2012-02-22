@@ -36,14 +36,9 @@ class user extends app {
 
 	function join() {
 		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
-			$username = $this->app()->request->username;
-			$password = $this->app()->request->password;
-		}
-		if (isset($username) and isset($password)) {
 			$user = $this->app()->users;
-			$user->id = '';
-			$user->username = $username;
-			$user->password = sha1($password);
+			$user->username = $this->app()->request->username;
+			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
 			$user->create();
 			if (isset($user->id)) {
