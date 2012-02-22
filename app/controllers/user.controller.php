@@ -57,11 +57,26 @@ class user extends app {
 
 	function join() {
 		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
+
+			if (
+				!strlen($this->app()->request->username) or 
+				!strlen($this->app()->request->password) or 
+				strlen($this->app()->request->username) < 8 or 
+				strlen($this->app()->request->password) < 8 or 
+				!ctype_alnum($this->app()->request->username)
+				) {
+				$this->app()->set('messages', array(
+					'<span class="error">Please enter a valid username and password.</span>'
+				));
+				$this->app()->go('join');
+			}
+			
 			$user = $this->app()->users;
 			$user->username = $this->app()->request->username;
 			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
 			$user->create();
+			
 			if (isset($user->id) and $user->id > 0) {
 				$this->app()->set('user', array(
 					'id' => $user->id,
@@ -76,7 +91,7 @@ class user extends app {
 				));
 				$this->app()->go('join');
 			}
-		}
+		}	
 	}
 	
 	function authenticate($group = false) {

@@ -4,7 +4,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # common
-define('version', '1.0');
+define('version', '1.5');
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
@@ -19,7 +19,7 @@ define('author', '');
 define('dbhost', 'localhost');
 define('dbname', 'app');
 define('dbuser', 'root');
-define('dbpass', 'xxxxxxxxx');
+define('dbpass', 'magic');
 
 # paths
 define('abs', 'c:/Users/brad.slattman/workspace/app/');
