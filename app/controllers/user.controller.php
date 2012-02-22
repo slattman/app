@@ -16,7 +16,7 @@ class user extends app {
 			$user->delete();
 			$this->app()->set('user', new stdClass());		
 			$this->app()->set('messages', array(
-				'<span class="info">Invalid username or password.</span>'
+				'<span class="info">Your account has been removed.</span>'
 			));
 			$this->app()->go('login');
 		}

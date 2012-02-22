@@ -11,7 +11,7 @@
 </div>
 <?php $this->app()->set('messages', array()); ?>
 
-<p><a href="member/delete">Click here</a> to delete your account</p>
+<p><a style="cursor: pointer" onclick="if (confirm('Are you sure?')) location.href='member/delete'; return false;">Click here</a> to delete your account</p>
 
 <?php $this->app()->debug(); ?>
 
