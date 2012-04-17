@@ -1,6 +1,6 @@
 <?php
 # app framework users.class.php
-# v1.5 Brad Slattman - slattman@gmail.com
+# v2 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class users extends data {

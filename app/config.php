@@ -1,6 +1,6 @@
 <?php
 # app framework config.php
-# v1.5 Brad Slattman - slattman@gmail.com
+# v2 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # common
@@ -17,45 +17,41 @@ define('author', '');
 
 # data
 define('dbhost', 'localhost');
-define('dbname', 'app');
-define('dbuser', 'root');
-define('dbpass', 'magic');
+define('dbname', 'xxx');
+define('dbuser', 'xxx');
+define('dbpass', 'xxx');
 
 # paths
-define('abs', 'c:/Users/brad.slattman/workspace/app/');
-define('url', '//localhost/app/');
+define('abs', 'C:/wamp/www');
+define('url', '//localhost/public_html/');
 define('app', '../app/');
-define('models', app.'models/');
-define('controllers', app.'controllers/');
-define('views', app.'views/');
-define('helpers', app.'helpers/');
 
 # routes
 $routes = array(
 	'join' => array(
 		'view' => true,
-		'class' => 'user',
+		'controller' => 'user',
 		'method' => 'join'
 	),
 	'login' => array(
 		'view' => true,
-		'class' => 'user',
+		'controller' => 'user',
 		'method' => 'login'
 	),
 	'logout' => array(
 		'view' => false,
-		'class' => 'user',
+		'controller' => 'user',
 		'method' => 'logout'
 	),
 	'members' => array(
 		'view' => true,
-		'class' => 'user',
+		'controller' => 'user',
 		'method' => 'authenticate',
 		'args' => 'user'
 	),
 	'member/delete' => array(
 		'view' => false,
-		'class' => 'user',
+		'controller' => 'user',
 		'method' => 'delete'
 	)
 );

@@ -16,6 +16,9 @@
 		<legend>Join Form</legend>
 		<p><label for="username"><input type="text" name="username"></label></p>
 		<p><label for="password"><input type="password" name="password"></label></p>
+		<?php if ($this->app()->plugins->recaptcha->is_enabled()) : ?>
+			<p><label for="recaptcha"><div id="recaptcha"><?php $this->app()->plugins->recaptcha->show(); ?></div></label></p>
+		<?php endif; ?>
 		<p><input type="submit" name="Join"></p>
 	</fieldset>
 </form>

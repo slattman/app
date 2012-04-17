@@ -1,6 +1,6 @@
 <?php
 # app framework users.class.php
-# v1.5 Brad Slattman - slattman@gmail.com
+# v2 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class user extends app {
@@ -10,8 +10,8 @@ class user extends app {
 	}
 
 	function delete() {
-		if ($this->app()->user->is_authorized()) {
-			$user = $this->app()->users;
+		if ($this->app()->controllers->user->is_authorized()) {
+			$user = $this->app()->models->users;
 			$user->id = $this->app()->session->user->id;
 			$user->delete();
 			$this->app()->set('user', new stdClass());		
@@ -32,7 +32,7 @@ class user extends app {
 	
 	function login() {
 		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
-			$user = $this->app()->users;
+			$user = $this->app()->models->users;
 			$user->username = $this->app()->request->username;
 			$user->password = sha1($this->app()->request->password);
 			$user->read();
@@ -42,7 +42,7 @@ class user extends app {
 				'password' => $user->password,
 				'group' => $user->group
 			));
-			if ($this->app()->user->is_authorized()) {
+			if ($this->app()->controllers->user->is_authorized()) {
 				$this->app()->set('messages', array(
 					'<span class="info">You have been logged in.</span>'
 				));
@@ -70,8 +70,17 @@ class user extends app {
 				));
 				$this->app()->go('join');
 			}
-			
-			$user = $this->app()->users;
+
+			if ($this->app()->plugins->recaptcha->is_enabled()) {
+				if (!$this->app()->helpers->recaptcha->is_valid()) {
+					$this->app()->set('messages', array(
+						'<span class="error">The captcha code you entered is incorrect.</span>'
+					));
+					$this->app()->go('join');
+				}
+			}
+
+			$user = $this->app()->models->users;
 			$user->username = $this->app()->request->username;
 			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
@@ -96,7 +105,7 @@ class user extends app {
 	
 	function authenticate($group = false) {
 		if (isset($this->app()->session->user->username) and isset($this->app()->session->user->password)) {
-			$user = $this->app()->users;
+			$user = $this->app()->models->users;
 			$user->username = $this->app()->session->user->username;
 			$user->password = $this->app()->session->user->password;
 			$user->read();
@@ -117,20 +126,20 @@ class user extends app {
 							if (isset($user->group)) {
 								if ($user->group != 'administrator' and 
 									$user->group != 'user') {
-									$this->app()->user->logout();
+									$this->app()->controllers->user->logout();
 								}
 							} else {
-								$this->app()->user->logout();
+								$this->app()->controllers->user->logout();
 							}
 							break;
 						}
 					}
 				}
 			} else {
-				$this->app()->user->logout();
+				$this->app()->controllers->user->logout();
 			}
 		} else {
-			$this->app()->user->logout();
+			$this->app()->controllers->user->logout();
 		}
 		return;
 	}

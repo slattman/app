@@ -1,6 +1,6 @@
 <?php
 # app framework app.php
-# v1.5 Brad Slattman - slattman@gmail.com
+# v2 Brad Slattman - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 ######################################################################################
@@ -22,89 +22,50 @@ class app {
 			$this->initialize();
 		}
 	}
-	
+
 	function app() {
 		global $app;
 		return $app;
 	}
-	
-	function initialize() {
+
+	private function initialize() {
 		$this->bind($_REQUEST, 'request');
 		$this->bind($_SESSION, 'session');
 		$method = isset($this->request->app) ? (string)$this->request->app : false;
 		if ($method and method_exists(__CLASS__, $method)) {
 			call_user_func_array(array($this, $method), array());
 		}
-		$this->load(controllers);
-		$this->load(models);
-		$this->load(helpers);
+		$this->load('core');
+		$this->load('controllers');
+		$this->load('models');
+		$this->load('plugins');
 	}
 
-	function load($dir = false) {
-		if (is_dir($dir)) {
-			if ($dh = opendir($dir)) {
-				while (($file = readdir($dh)) !== false) {
-					if (file_exists($dir.$file) and strstr($file, '.php') and substr_count($file, '.') == 2) {
-						$class = explode('.', $file);
-						$class = $class[0];
-						require_once($dir.$file);
-						if (in_array($class, get_declared_classes())) {
-							$this->$class = new $class();
+	private function load($type = false) {
+		if ($type) {
+			$dir = app.$type.'/';
+			if (is_dir($dir)) {
+				if ($dh = opendir($dir)) {
+					while (($file = readdir($dh)) !== false) {
+						if (file_exists($dir.$file) and strstr($file, '.php') and substr_count($file, '.') == 2) {
+							$class = explode('.', $file);
+							$class = $class[0];
+							require_once($dir.$file);
+							if (in_array($class, get_declared_classes())) {
+								if ($type == 'core') {
+									$this->$class = new $class();
+								} else {
+									$this->$type->$class = new $class();
+								}
+							}
 						}
 					}
-				}
-				closedir($dh);
-			}
-		}
-
-	}
-	
-	function set($key = false, $value = false) {
-		if ($key) {
-			$_SESSION[$key] = $value;
-			$this->bind($_SESSION, 'session');
-		}
-	}
-
-	function go($page = false) {
-		if ($page) header("Location: ".url.$page);
-	}
-
-	function view() {
-		global $routes;
-		$view = isset($this->request->app) ? $this->request->app : 'index';
-		if (array_key_exists($view, $routes)) {
-			$route = $routes[$view];
-			if (class_exists($route['class'])) {
-				if (method_exists($this->app()->$route['class'], $route['method'])) {
-					$method = new ReflectionMethod($route['class'], $route['method']);
-					if (isset($route['args'])) {
-						if (!is_array($route['args'])) {
-							$route['args'] = array($route['args']);
-						}
-						$method->invokeArgs($this->app()->$route['class'], $route['args']);
-					} else {
-						$method->invoke($this->app()->$route['class']);
-					}
-					if ($route['view'] !== true) {
-						return;
-					}
+					closedir($dh);
 				}
 			}
 		}
-		if (file_exists(views.$view.'.html')) {
-			require_once(views.$view.'.html');
-		} elseif (is_dir(views.$view) and file_exists(views.$view.'/index.html')) {
-			require_once(views.$view.'/index.html');
-		} else {
-			$this->go(error);
-		}
 	}
-	
-	function current_view() {
-		return isset($this->request->app) ? $this->request->app : 'index';
-	}
-	
+
 	function bind($array = array(), $key = false) {
 		$object = new stdClass();
 		if (count($array)) {
@@ -121,6 +82,55 @@ class app {
 		} else {
 			return (object)$object;
 		}
+	}
+
+	function view() {
+		global $routes;
+		$view = isset($this->request->app) ? $this->request->app : 'index';
+		if (array_key_exists($view, $routes)) {
+			$route = $routes[$view];
+			if (class_exists($route['controller'])) {
+				if (method_exists($this->app()->controllers->$route['controller'], $route['method'])) {
+					$method = new ReflectionMethod($route['controller'], $route['method']);
+					if (isset($route['args'])) {
+						if (!is_array($route['args'])) {
+							$route['args'] = array($route['args']);
+						}
+						$method->invokeArgs($this->app()->controllers->$route['controller'], $route['args']);
+					} else {
+						$method->invoke($this->app()->controllers->$route['controller']);
+					}
+					if ($route['view'] !== true) {
+						return;
+					}
+				}
+			}
+		}
+		if (file_exists(app.'views/'.$view.'.html')) {
+			require_once(app.'views/'.$view.'.html');
+		} elseif (is_dir(app.'views/'.$view) and file_exists(app.'views/'.$view.'/index.html')) {
+			require_once(app.'views/'.$view.'/index.html');
+		} else {
+			$this->go(error);
+		}
+	}
+
+	function set($key = false, $value = false) {
+		if ($key) {
+			$_SESSION[$key] = $value;
+			$this->bind($_SESSION, 'session');
+		}
+	}
+
+	function go($page = false) {
+		if ($page) {
+			header("Location: ".url.$page);
+			exit;
+		}
+	}
+
+	function current_view() {
+		return isset($this->request->app) ? $this->request->app : 'index';
 	}
 
 	function error($error) {
