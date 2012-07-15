@@ -7,7 +7,7 @@ class data extends app {
 	function __construct() { parent::__construct(true); }
 	
 	function populate() {
-		$result = $this->app()->data->result;
+		$result = $this->result;
 		if (isset($result) and get_class($this) !== __CLASS__) {
 			foreach ($result as $k => $v) {
 				$this->$k = $v;
@@ -110,7 +110,7 @@ class data extends app {
 				$params[] = $k.' = ?';
 			}
 		}
-		$this->app()->data->query(
+		$this->query(
 			"select * from " . $this->table . " where " . implode(" and ", $params), 
 			$types, 
 			array_values($attributes)
