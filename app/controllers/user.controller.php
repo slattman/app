@@ -9,7 +9,7 @@ class user extends app {
 	}
 
 	function delete() {
-		if ($this->app()->controllers->user->is_authorized()) {
+		if ($this->is_authorized()) {
 			$user = $this->app()->models->users;
 			$user->id = $this->app()->session->user->id;
 			$user->delete();
@@ -41,7 +41,7 @@ class user extends app {
 				'password' => $user->password,
 				'group' => $user->group
 			));
-			if ($this->app()->controllers->user->is_authorized()) {
+			if ($this->is_authorized()) {
 				$this->app()->set('messages', array(
 					'<span class="info">You have been logged in.</span>'
 				));
@@ -114,10 +114,10 @@ class user extends app {
 						case 'administrator': {
 							if (isset($user->group)) {
 								if ($user->group != 'administrator') {
-									$this->app()->user->logout();
+									$this->logout();
 								}
 							} else {
-								$this->app()->user->logout();
+								$this->logout();
 							}
 							break;
 						}
@@ -125,20 +125,20 @@ class user extends app {
 							if (isset($user->group)) {
 								if ($user->group != 'administrator' and 
 									$user->group != 'user') {
-									$this->app()->controllers->user->logout();
+									$this->logout();
 								}
 							} else {
-								$this->app()->controllers->user->logout();
+								$this->logout();
 							}
 							break;
 						}
 					}
 				}
 			} else {
-				$this->app()->controllers->user->logout();
+				$this->logout();
 			}
 		} else {
-			$this->app()->controllers->user->logout();
+			$this->logout();
 		}
 		return;
 	}
