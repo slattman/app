@@ -1,6 +1,5 @@
 <?php
-# app framework data.class.php
-# v2 Brad Slattman - slattman@gmail.com
+# app framework data.class.php - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class data extends app {

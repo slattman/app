@@ -1,10 +1,9 @@
 <?php
-# app framework config.php
-# v2 Brad Slattman - slattman@gmail.com
+# app framework config.php - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # common
-define('version', '1.5');
+define('version', '2');
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 

@@ -1,8 +1,6 @@
 <?php
-# app framework app.php
-# v2 Brad Slattman - slattman@gmail.com
+# app framework app.php - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
-
 ######################################################################################
 
 # start the session
