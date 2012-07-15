@@ -88,12 +88,12 @@ class data extends app {
 			}
 			$params[] = '?';
 		}
-		$this->app()->data->query(
+		$this->query(
 			"insert into " . $this->table . " (`" . implode("`, `", array_keys($attributes)) . "`) values (" . implode(", ", $params) . ")", 
 			$types, 
 			array_values($attributes)
 		);
-		$this->$index = $this->app()->data->result->insert_id;
+		$this->$index = $this->result->insert_id;
 	}
 
 	public function read() {
@@ -131,7 +131,7 @@ class data extends app {
 			}
 			$params[] = $k.' = ?';
 		}
-		$this->app()->data->query(
+		$this->query(
 			"update " . $this->table . " set " . implode(", ", $params) . " where " . $this->index . "=" . $this->$index, 
 			$types, 
 			array_values($attributes)
@@ -152,7 +152,7 @@ class data extends app {
 				$params[] = $k.' = ?';
 			}
 		}
-		$this->app()->data->query(
+		$this->query(
 			"delete from " . $this->table . " where " . implode(" and ", $params), 
 			$types, 
 			array_values($attributes)

@@ -87,15 +87,8 @@ class user extends app {
 			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
 			$user->create();
-			
 			if (isset($user->id) and $user->id > 0) {
-				$this->app()->set('user', array(
-					'id' => $user->id,
-					'username' => $user->email,
-					'password' => $user->password,
-					'group' => $user->group
-				));
-				$this->app()->go('members');
+				$this->login();
 			} else {
 				$this->app()->set('messages', array(
 					'<span class="error">That email is already being used.</span>'
@@ -149,20 +142,14 @@ class user extends app {
 	function is_not_valid_email() {
 		if ($this->app()->request->email) {
 			if (filter_var($this->app()->request->email, FILTER_VALIDATE_EMAIL)) {
-				$user = $this->app()->models->users;
-				$user->email = $this->app()->request->user->email;
-				$user->password = $this->app()->request->user->password;
-				$user->read();
-				if (!isset($user->id)) {
-					return false;
-				}
+				return false;
 			}
 		}
 		return true;
 	}
 	
 	function is_authorized() {
-		return (isset($this->app()->session->user->id) and $this->app()->session->user->id > 0) ? 1 : 0;
+		return (isset($this->app()->session->user->id) and $this->app()->session->user->id > 0) ? true : false;
 	}
 
 }
