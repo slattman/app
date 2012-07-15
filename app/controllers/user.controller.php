@@ -71,7 +71,7 @@ class user extends app {
 			}
 
 			if ($this->app()->plugins->recaptcha->is_enabled()) {
-				if (!$this->app()->helpers->recaptcha->is_valid()) {
+				if (!$this->app()->plugins->recaptcha->is_valid()) {
 					$this->app()->set('messages', array(
 						'<span class="error">The captcha code you entered is incorrect.</span>'
 					));
