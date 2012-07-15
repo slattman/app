@@ -1,5 +1,5 @@
 <?php
-# app framework users.class.php - slattman@gmail.com
+# app framework - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 
 class users extends data {

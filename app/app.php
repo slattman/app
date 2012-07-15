@@ -1,5 +1,5 @@
 <?php
-# app framework app.php - slattman@gmail.com
+# app framework - slattman@gmail.com
 # # # # # # # # # # # # # # # # # # # # # # # # #
 ######################################################################################
 
