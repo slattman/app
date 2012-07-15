@@ -4,16 +4,16 @@
 	<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
 	<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
 	<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-	<head manifest="<?php echo url;?>default.appcache">
+	<head manifest="<?php echo BASE_URL;?>default.appcache">
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title></title>
 		<meta name="description" content="">
 		<meta name="author" content="">
 		<meta name="viewport" content="width=device-width">
-		<link rel="stylesheet/less" href="<?php echo url;?>less/style.less">
-		<script src="<?php echo url;?>js/libs/less-1.2.1.min.js"></script>
-		<script src="<?php echo url;?>js/libs/modernizr-2.5.2-respond-1.1.0.min.js"></script>
+		<link rel="stylesheet/less" href="<?php echo BASE_URL;?>less/style.less">
+		<script src="<?php echo BASE_URL;?>js/libs/less-1.2.1.min.js"></script>
+		<script src="<?php echo BASE_URL;?>js/libs/modernizr-2.5.2-respond-1.1.0.min.js"></script>
 	</head>
 	<body>
 
@@ -30,15 +30,15 @@
 					<a class="brand" href="#">Project name</a>
 					<div class="nav-collapse">
 						<ul class="nav">
-							<li<?php echo $app->current_view() == 'index' ? ' class="active"' : '';?>><a href="<?php echo url;?>">Home</a></li>
+							<li<?php echo $app->current_view() == 'index' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>">Home</a></li>
 							<?php if ($app->controllers->user->is_authorized()) : ?>
-								<li<?php echo $app->current_view() == 'members' ? ' class="active"' : '';?>><a href="<?php echo url;?>members">Members</a></li>
-								<li<?php echo $app->current_view() == 'logout' ? ' class="active"' : '';?>><a href="<?php echo url;?>logout">Logout</a></li>
+								<li<?php echo $app->current_view() == 'members' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>members">Members</a></li>
+								<li<?php echo $app->current_view() == 'logout' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>logout">Logout</a></li>
 							<?php else : ?>
-								<li<?php echo $app->current_view() == 'join' ? ' class="active"' : '';?>><a href="<?php echo url;?>join">Join</a></li>
-								<li<?php echo $app->current_view() == 'login' ? ' class="active"' : '';?>><a href="<?php echo url;?>login">Login</a></li>
+								<li<?php echo $app->current_view() == 'join' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>join">Join</a></li>
+								<li<?php echo $app->current_view() == 'login' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>login">Login</a></li>
 							<?php endif; ?>
-							<li<?php echo $app->current_view() == 'contact' ? ' class="active"' : '';?>><a href="<?php echo url;?>contact">Contact</a></li>
+							<li<?php echo $app->current_view() == 'contact' ? ' class="active"' : '';?>><a href="<?php echo BASE_URL;?>contact">Contact</a></li>
 						</ul>
 					</div><!--/.nav-collapse -->
 				</div>
@@ -55,11 +55,11 @@
 
 		<script src="//www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="<?php echo url;?>js/libs/jquery-1.7.1.min.js"><\/script>')</script>
-		<script src="<?php echo url;?>js/libs/bootstrap/transition.js"></script>
-		<script src="<?php echo url;?>js/libs/bootstrap/collapse.js"></script>
-		<script src="<?php echo url;?>js/plugins.js"></script>
-		<script src="<?php echo url;?>js/script.js"></script>
+		<script>window.jQuery || document.write('<script src="<?php echo BASE_URL;?>js/libs/jquery-1.7.1.min.js"><\/script>')</script>
+		<script src="<?php echo BASE_URL;?>js/libs/bootstrap/transition.js"></script>
+		<script src="<?php echo BASE_URL;?>js/libs/bootstrap/collapse.js"></script>
+		<script src="<?php echo BASE_URL;?>js/plugins.js"></script>
+		<script src="<?php echo BASE_URL;?>js/script.js"></script>
 
 		<script>
 			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
