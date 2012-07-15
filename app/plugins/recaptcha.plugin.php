@@ -6,7 +6,7 @@ define('RECAPTCHA_PRIVATE_KEY', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
 class recaptcha {
 
 	function recaptcha() {
-		require_once(app.'plugins/recaptcha-php-1.11/recaptchalib.php');
+		require_once('../app/plugins/recaptcha-php-1.11/recaptchalib.php');
 	}
 
 	function is_enabled() {

@@ -16,7 +16,6 @@ define('DB_USER', 'xxx');
 define('DB_PASS', 'xxx');
 
 # paths
-define('ABS_PATH', 'C:/wamp/www');
 define('BASE_URL', '//localhost/public_html/');
 define('ERROR_PAGE', '404.html');
 
