@@ -38,9 +38,9 @@ class data extends app {
 	function query($sql = '', $types = '', $parameters = array()) {
 		$result = array();
 		array_unshift($parameters, $types);
-		$mysqli = new mysqli(dbhost, dbuser, dbpass, dbname);
+		$mysqli = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 		if (mysqli_connect_errno()) {
-			$result['error'] = 'Connection failed: '.mysqli_connect_error();
+			$result['error'] = 'Connection failed: ' . mysqli_connect_error();
 		}
 		if ($stmt = $mysqli->prepare($sql)) {
 	        $method = new ReflectionMethod('mysqli_stmt', 'bind_param');
@@ -89,7 +89,7 @@ class data extends app {
 			$params[] = '?';
 		}
 		$this->app()->data->query(
-			"insert into ".$this->table." (`".implode("`, `", array_keys($attributes))."`) values (".implode(", ", $params).")", 
+			"insert into " . $this->table . " (`" . implode("`, `", array_keys($attributes)) . "`) values (" . implode(", ", $params) . ")", 
 			$types, 
 			array_values($attributes)
 		);
@@ -111,7 +111,7 @@ class data extends app {
 			}
 		}
 		$this->app()->data->query(
-			"select * from ".$this->table." where ".implode(" and ", $params), 
+			"select * from " . $this->table . " where " . implode(" and ", $params), 
 			$types, 
 			array_values($attributes)
 		);
@@ -132,7 +132,7 @@ class data extends app {
 			$params[] = $k.' = ?';
 		}
 		$this->app()->data->query(
-			"update ".$this->table." set ".implode(", ", $params)." where ".$this->index."=".$this->$index, 
+			"update " . $this->table . " set " . implode(", ", $params) . " where " . $this->index . "=" . $this->$index, 
 			$types, 
 			array_values($attributes)
 		);
@@ -153,7 +153,7 @@ class data extends app {
 			}
 		}
 		$this->app()->data->query(
-			"delete from ".$this->table." where ".implode(" and ", $params), 
+			"delete from " . $this->table . " where " . implode(" and ", $params), 
 			$types, 
 			array_values($attributes)
 		);
