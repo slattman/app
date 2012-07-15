@@ -41,14 +41,14 @@ class app {
 
 	private function load($type = false) {
 		if ($type) {
-			$dir = app.$type.'/';
+			$dir = '../app/' . $type . '/';
 			if (is_dir($dir)) {
 				if ($dh = opendir($dir)) {
 					while (($file = readdir($dh)) !== false) {
 						if (file_exists($dir.$file) and strstr($file, '.php') and substr_count($file, '.') == 2) {
 							$class = explode('.', $file);
 							$class = $class[0];
-							require_once($dir.$file);
+							require_once($dir . $file);
 							if (in_array($class, get_declared_classes())) {
 								if ($type == 'core') {
 									$this->$class = new $class();
@@ -104,12 +104,12 @@ class app {
 				}
 			}
 		}
-		if (file_exists(app.'views/'.$view.'.html')) {
-			require_once(app.'views/'.$view.'.html');
-		} elseif (is_dir(app.'views/'.$view) and file_exists(app.'views/'.$view.'/index.html')) {
-			require_once(app.'views/'.$view.'/index.html');
+		if (file_exists('../app/views/' . $view . '.html')) {
+			require_once('../app/views/' . $view . '.html');
+		} elseif (is_dir('../app/views/' . $view) and file_exists('../app/views/' . $view . '/index.html')) {
+			require_once('../app/views/' . $view . '/index.html');
 		} else {
-			$this->go(error);
+			$this->go(ERROR_PAGE);
 		}
 	}
 
@@ -122,7 +122,7 @@ class app {
 
 	function go($page = false) {
 		if ($page) {
-			header("Location: ".url.$page);
+			header("Location: " . BASE_URL . $page);
 			exit;
 		}
 	}
