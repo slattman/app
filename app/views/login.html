@@ -14,8 +14,11 @@
 <form method="post">
 	<fieldset>
 		<legend>Login Form</legend>
-		<p><label for="username">Username:</label><input type="text" name="username"></p>
+		<p><label for="email">Email:</label><input type="text" name="email"></p>
 		<p><label for="password">Password:</label><input type="password" name="password"></p>
+		<?php /* if ($this->app()->plugins->recaptcha->is_enabled()) : ?>
+			<p id="recaptcha"><?php $this->app()->plugins->recaptcha->show(); ?></p>
+		<?php endif; */ ?>
 		<p><button>Login</button></p>
 	</fieldset>
 </form>

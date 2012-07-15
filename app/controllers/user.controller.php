@@ -30,14 +30,22 @@ class user extends app {
 	}
 	
 	function login() {
-		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
+		if (isset($this->app()->request->email) and isset($this->app()->request->password)) {
+			/* if ($this->app()->plugins->recaptcha->is_enabled()) {
+				if (!$this->app()->plugins->recaptcha->is_valid()) {
+					$this->app()->set('messages', array(
+						'<span class="error">The captcha code you entered is incorrect.</span>'
+					));
+					$this->app()->go('join');
+				}
+			} */
 			$user = $this->app()->models->users;
-			$user->username = $this->app()->request->username;
+			$user->email = $this->app()->request->email;
 			$user->password = sha1($this->app()->request->password);
 			$user->read();
 			$this->app()->set('user', array(
 				'id' => $user->id,
-				'username' => $user->username,
+				'email' => $user->email,
 				'password' => $user->password,
 				'group' => $user->group
 			));
@@ -48,28 +56,24 @@ class user extends app {
 				$this->app()->go('members');
 			} else {
 				$this->app()->set('messages', array(
-					'<span class="error">Invalid username or password.</span>'
+					'<span class="error">Invalid email or password.</span>'
 				));
 			}
 		}
 	}
 
 	function join() {
-		if (isset($this->app()->request->username) and isset($this->app()->request->password)) {
-
+		if (isset($this->app()->request->email) and isset($this->app()->request->password)) {
 			if (
-				!strlen($this->app()->request->username) or 
+				!strlen($this->app()->request->email) or 
 				!strlen($this->app()->request->password) or 
-				strlen($this->app()->request->username) < 8 or 
-				strlen($this->app()->request->password) < 8 or 
-				!ctype_alnum($this->app()->request->username)
-				) {
+				$this->is_not_valid_email() or 
+				strlen($this->app()->request->password) < 8) {
 				$this->app()->set('messages', array(
-					'<span class="error">Please enter a valid username and password.</span>'
+					'<span class="error">Please enter a valid email and password.</span>'
 				));
 				$this->app()->go('join');
 			}
-
 			if ($this->app()->plugins->recaptcha->is_enabled()) {
 				if (!$this->app()->plugins->recaptcha->is_valid()) {
 					$this->app()->set('messages', array(
@@ -78,9 +82,8 @@ class user extends app {
 					$this->app()->go('join');
 				}
 			}
-
 			$user = $this->app()->models->users;
-			$user->username = $this->app()->request->username;
+			$user->email = $this->app()->request->email;
 			$user->password = sha1($this->app()->request->password);
 			$user->group = 'user';
 			$user->create();
@@ -88,14 +91,14 @@ class user extends app {
 			if (isset($user->id) and $user->id > 0) {
 				$this->app()->set('user', array(
 					'id' => $user->id,
-					'username' => $user->username,
+					'username' => $user->email,
 					'password' => $user->password,
 					'group' => $user->group
 				));
 				$this->app()->go('members');
 			} else {
 				$this->app()->set('messages', array(
-					'<span class="error">That username is already taken.</span>'
+					'<span class="error">That email is already being used.</span>'
 				));
 				$this->app()->go('join');
 			}
@@ -103,9 +106,9 @@ class user extends app {
 	}
 	
 	function authenticate($group = false) {
-		if (isset($this->app()->session->user->username) and isset($this->app()->session->user->password)) {
+		if (isset($this->app()->session->user->email) and isset($this->app()->session->user->password)) {
 			$user = $this->app()->models->users;
-			$user->username = $this->app()->session->user->username;
+			$user->email = $this->app()->session->user->email;
 			$user->password = $this->app()->session->user->password;
 			$user->read();
 			if (isset($user->id)) {
@@ -142,9 +145,24 @@ class user extends app {
 		}
 		return;
 	}
+
+	function is_not_valid_email() {
+		if ($this->app()->request->email) {
+			if (filter_var($this->app()->request->email, FILTER_VALIDATE_EMAIL)) {
+				$user = $this->app()->models->users;
+				$user->email = $this->app()->request->user->email;
+				$user->password = $this->app()->request->user->password;
+				$user->read();
+				if (!isset($user->id)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 	
 	function is_authorized() {
-		return (isset($this->app()->session->user->id) and $this->app()->session->user->id > 0) ? true : false;
+		return (isset($this->app()->session->user->id) and $this->app()->session->user->id > 0) ? 1 : 0;
 	}
 
 }
